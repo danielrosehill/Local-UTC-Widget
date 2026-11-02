@@ -2,6 +2,7 @@ package com.danielrosehill.localutcwidget
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -51,6 +52,39 @@ class SettingsActivity : Activity() {
         }
         col.addView(preview, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
 
+        if (!configuring) {
+            val mgr = getSystemService(AppWidgetManager::class.java)
+            if (mgr.isRequestPinAppWidgetSupported) {
+                col.addView(Button(this).apply {
+                    text = "Add widget to home screen"
+                    setOnClickListener {
+                        mgr.requestPinAppWidget(ComponentName(this@SettingsActivity, ClockWidgetProvider::class.java), null, null)
+                    }
+                }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            }
+        }
+
+        col.addView(heading("Presets", 16f))
+        col.addView(note("One tap sets layout, font, size and what's shown."))
+        val presetRow = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        Preset.entries.forEach { p ->
+            presetRow.addView(Button(this).apply {
+                text = p.label
+                isAllCaps = false
+                typeface = typefaceFor(p.settings.font)
+                setOnClickListener {
+                    s = p.settings
+                    Prefs.save(this@SettingsActivity, s)
+                    ClockWidgetProvider.updateAll(this@SettingsActivity)
+                    recreate()
+                }
+            }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        }
+        col.addView(presetRow)
+
+        col.addView(heading("Layout", 16f))
+        col.addView(choice(Template.entries.map { it.label }, s.template.ordinal) { s = s.copy(template = Template.entries[it]) })
+
         col.addView(heading("Show", 16f))
         col.addView(toggle("Date", s.showDate) { s = s.copy(showDate = it) })
         col.addView(toggle("UTC offset of local time", s.showOffset) { s = s.copy(showOffset = it) })
@@ -58,7 +92,7 @@ class SettingsActivity : Activity() {
         col.addView(toggle("LOCAL / UTC labels", s.showLabels) { s = s.copy(showLabels = it) })
 
         col.addView(heading("Font", 16f))
-        col.addView(choice(Font.entries.map { it.label }, s.font.ordinal) { s = s.copy(font = Font.entries[it]) })
+        col.addView(choice(Font.entries.map { it.label }, s.font.ordinal, Font.entries.map { typefaceFor(it) }) { s = s.copy(font = Font.entries[it]) })
 
         col.addView(heading("Size", 16f))
         col.addView(choice(Size.entries.map { it.label }, s.size.ordinal) { s = s.copy(size = Size.entries[it]) })
@@ -104,9 +138,10 @@ class SettingsActivity : Activity() {
         setOnCheckedChangeListener { _, v -> set(v); refresh() }
     }
 
-    private fun choice(labels: List<String>, selected: Int, set: (Int) -> Unit) = RadioGroup(this).apply {
+    private fun choice(labels: List<String>, selected: Int, faces: List<Typeface>? = null, set: (Int) -> Unit) = RadioGroup(this).apply {
         labels.forEachIndexed { i, l ->
             addView(RadioButton(context).apply {
+                faces?.let { typeface = it[i] }
                 id = View.generateViewId()
                 text = l
                 textSize = 16f
@@ -130,6 +165,16 @@ class SettingsActivity : Activity() {
         text = t
         textSize = 14f
         alpha = 0.7f
+    }
+
+    /** Each font option is drawn in its own face, so the list is its own preview. */
+    private fun typefaceFor(f: Font): Typeface = when (f) {
+        Font.SANS -> Typeface.SANS_SERIF
+        Font.SANS_LIGHT -> Typeface.create("sans-serif-light", Typeface.NORMAL)
+        Font.CONDENSED -> Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+        Font.SERIF -> Typeface.SERIF
+        Font.MONO -> Typeface.MONOSPACE
+        else -> resources.getFont(f.fontRes)
     }
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()

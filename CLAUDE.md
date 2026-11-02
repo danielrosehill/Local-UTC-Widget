@@ -21,6 +21,8 @@ Then `gh release create v1.x out/Local-UTC-Widget-v1.x.apk` and upload to Drive 
 
 ## Notes
 
-- Widget layouts are generated: edit `scripts/gen-layouts.sh`, rerun it.
+- Widget layouts are generated: edit `scripts/gen_layouts.py` (fonts, templates), run `python3 -I scripts/gen_layouts.py`. It also writes `Layouts.kt` (Font/Template enums).
+- Bundled fonts (`res/font/`, OFL, licences in `fonts-licenses/`) do NOT render inside RemoteViews: launchers ignore `@font/` and fall back to the default face (verified Pixel launcher, API 34, 2026-11-02). Their layouts use ImageViews; `WidgetRenderer` draws text to bitmaps and `ClockWidgetProvider` redraws each minute (exact non-wakeup RTC alarm, `USE_EXACT_ALARM`). System fonts keep live `TextClock`.
+- Test on a real home screen, not just the in-app preview: the preview inflates in the app process, where `@font` works, so it hides launcher-only failures. The "Add widget to home screen" button (requestPinAppWidget) pins one in the emulator.
 - Testing: AVD `hebrish34` headless (`emulator -avd hebrish34 -no-window`), never the live phone first.
 - JDK 25 is the system default; build with JDK 21.

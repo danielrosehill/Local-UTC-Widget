@@ -2,20 +2,6 @@ package com.danielrosehill.localutcwidget
 
 import android.content.Context
 
-/** Fonts available to the widget. [key] matches res/layout/widget_<key>.xml (scripts/gen-layouts.sh). */
-enum class Font(val key: String, val label: String, val layout: Int) {
-    SANS("sans", "Sans (default)", R.layout.widget_sans),
-    SANS_LIGHT("sans_light", "Sans light", R.layout.widget_sans_light),
-    SANS_MEDIUM("sans_medium", "Sans medium", R.layout.widget_sans_medium),
-    CONDENSED("condensed", "Condensed", R.layout.widget_condensed),
-    SERIF("serif", "Serif", R.layout.widget_serif),
-    MONO("mono", "Monospace", R.layout.widget_mono);
-
-    companion object {
-        fun of(key: String?) = entries.firstOrNull { it.key == key } ?: SANS
-    }
-}
-
 /** Clock text size in sp; labels, dates and zone line scale from it. */
 enum class Size(val key: String, val label: String, val clockSp: Float) {
     SMALL("small", "Small", 26f),
@@ -34,6 +20,7 @@ data class Settings(
     val showZoneName: Boolean,
     val showLabels: Boolean,
     val font: Font,
+    val template: Template,
     val size: Size,
 )
 
@@ -48,6 +35,7 @@ object Prefs {
             showZoneName = p.getBoolean("show_zone_name", false),
             showLabels = p.getBoolean("show_labels", true),
             font = Font.of(p.getString("font", null)),
+            template = Template.of(p.getString("template", null)),
             size = Size.of(p.getString("size", null)),
         )
     }
@@ -59,7 +47,17 @@ object Prefs {
             .putBoolean("show_zone_name", s.showZoneName)
             .putBoolean("show_labels", s.showLabels)
             .putString("font", s.font.key)
+            .putString("template", s.template.key)
             .putString("size", s.size.key)
             .apply()
     }
+}
+
+/** Ready-made looks, applied in one tap from the settings screen. */
+enum class Preset(val label: String, val settings: Settings) {
+    MISSION_CONTROL("Mission control", Settings(showDate = false, showOffset = true, showZoneName = false, showLabels = true, font = Font.ORBITRON, size = Size.SMALL, template = Template.PIPE)),
+    TERMINAL("Terminal", Settings(showDate = true, showOffset = true, showZoneName = false, showLabels = true, font = Font.SHARE_TECH_MONO, size = Size.MEDIUM, template = Template.STACKED)),
+    POSTER("Poster", Settings(showDate = false, showOffset = false, showZoneName = false, showLabels = true, font = Font.BEBAS_NEUE, size = Size.LARGE, template = Template.COLUMNS)),
+    MINIMAL("Minimal", Settings(showDate = false, showOffset = false, showZoneName = false, showLabels = false, font = Font.SANS_LIGHT, size = Size.MEDIUM, template = Template.PIPE)),
+    TRAVELLER("Traveller", Settings(showDate = true, showOffset = true, showZoneName = true, showLabels = true, font = Font.SPACE_GROTESK, size = Size.MEDIUM, template = Template.COLUMNS)),
 }
