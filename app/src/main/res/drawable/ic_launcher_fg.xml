@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- two clock faces: local (front) and UTC (back) -->
+    <path android:fillColor="#4FC3F7" android:pathData="M64,30a20,20 0,1 1,0 40a20,20 0,1 1,0 -40z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M46,38a20,20 0,1 1,0 40a20,20 0,1 1,0 -40z" />
+    <path android:fillColor="#101418" android:pathData="M44.5,45h3v13.5l9,5.2 -1.5,2.6 -10.5,-6.1z" />
+</vector>

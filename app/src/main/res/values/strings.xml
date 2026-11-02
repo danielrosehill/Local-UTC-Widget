@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Local UTC Widget</string>
+    <string name="widget_description">Local time and UTC, 24-hour</string>
+    <string name="label_local">LOCAL</string>
+    <string name="label_utc">UTC</string>
+</resources>
