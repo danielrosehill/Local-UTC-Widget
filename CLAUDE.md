@@ -19,6 +19,8 @@ VERSION_NAME=1.x VERSION_CODE=N ./gradlew assembleRelease
 
 Then `gh release create v1.x out/Local-UTC-Widget-v1.x.apk` and upload to Drive (skill `google-workspace/upload-apk`).
 
+Distribution: public F-Droid channel since 2026-11-07 (`apps.yml` in `danielrosehill/F-Droid-Public-Repo`). After a release run `gh workflow run publish.yml -R danielrosehill/F-Droid-Public-Repo`, or it waits for the Monday 03:17 UTC run.
+
 ## Notes
 
 - Widget layouts are generated: edit `scripts/gen_layouts.py` (fonts, templates), run `python3 -I scripts/gen_layouts.py`. It also writes `Layouts.kt` (Font/Template enums).
