@@ -21,11 +21,11 @@
 <TextView android:id="@+id/zone_local" android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:fontFamily="serif" android:textColor="#B0BEC5" android:textSize="12sp" />
 <TextClock android:id="@+id/date_local" android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:fontFamily="serif" android:format12Hour="EEE d MMM yyyy" android:format24Hour="EEE d MMM yyyy" android:includeFontPadding="false" android:maxLines="1"
+    android:fontFamily="serif" android:format12Hour="EEE d MMM" android:format24Hour="EEE d MMM" android:includeFontPadding="false" android:maxLines="1"
     android:textColor="#B0BEC5" android:textSize="12sp"  />
 </LinearLayout>
 <TextClock android:layout_marginStart="16dp" android:id="@+id/date_utc" android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:fontFamily="serif" android:format12Hour="EEE d MMM yyyy" android:format24Hour="EEE d MMM yyyy" android:includeFontPadding="false" android:maxLines="1"
+    android:fontFamily="serif" android:format12Hour="EEE d MMM" android:format24Hour="EEE d MMM" android:includeFontPadding="false" android:maxLines="1"
     android:textColor="#81D4FA" android:textSize="12sp" android:timeZone="UTC" />
 </LinearLayout>
 </LinearLayout>

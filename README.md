@@ -7,13 +7,14 @@ An Android home-screen widget that shows **local time and UTC side by side, in 2
 Set in the app (or long-press the widget → settings). They apply to every widget instance.
 
 - **Date** under each clock (UTC's date can differ from the local one around midnight)
-- **UTC offset** of local time, e.g. `UTC+02:00` (follows DST automatically)
+- **UTC offset** of local time in hours, e.g. `+2`, `-5`, `+5.5`, `+5.75` (follows DST automatically)
 - **Local time zone name**, e.g. `Jerusalem`
 - **LOCAL / UTC labels** on or off
-- **Layout**: Stacked, Side by side (thin divider), Inline with pipe (`LOCAL 14:32 | UTC 12:32`)
-- **Font**: system Sans, Sans light, Condensed, Serif, Monospace, plus bundled Orbitron, Audiowide, Share Tech Mono, JetBrains Mono, Space Grotesk, Bebas Neue, Rajdhani, Major Mono Display
+- **Date format**: `Sun 8 Nov` (default), `Sun 8 Nov 2026`, `08/11` (day/month), `11/08` (month/day), `08/11/2026`, `11/08/2026`, `2026-11-08`
+- **Layout**: Stacked (labels in one column, clocks and the lines under them share one left edge), Side by side (thin divider), Inline with pipe (`LOCAL 14:32 | UTC 12:32`)
+- **Font**: system Sans light (default), Sans, Condensed, Serif, Monospace, plus bundled Orbitron, Audiowide, Share Tech Mono, JetBrains Mono, Space Grotesk, Bebas Neue, Rajdhani, Major Mono Display
 - **Size**: small, medium, large
-- **Presets**: one tap: Mission control (Orbitron, pipe), Terminal (Share Tech Mono, stacked), Poster (Bebas Neue, side by side), Minimal (Sans light, pipe, no labels), Traveller (Space Grotesk, zone + date)
+- **Presets** (at the bottom of the settings screen; keep your date format): one tap: Mission control (Orbitron, pipe), Terminal (Share Tech Mono, stacked), Poster (Bebas Neue, side by side), Minimal (Sans light, pipe, no labels), Traveller (Space Grotesk, zone + date)
 
 The settings screen also has an **Add widget to home screen** button.
 

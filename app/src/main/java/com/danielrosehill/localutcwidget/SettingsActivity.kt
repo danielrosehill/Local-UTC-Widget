@@ -64,24 +64,6 @@ class SettingsActivity : Activity() {
             }
         }
 
-        col.addView(heading("Presets", 16f))
-        col.addView(note("One tap sets layout, font, size and what's shown."))
-        val presetRow = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        Preset.entries.forEach { p ->
-            presetRow.addView(Button(this).apply {
-                text = p.label
-                isAllCaps = false
-                typeface = typefaceFor(p.settings.font)
-                setOnClickListener {
-                    s = p.settings
-                    Prefs.save(this@SettingsActivity, s)
-                    ClockWidgetProvider.updateAll(this@SettingsActivity)
-                    recreate()
-                }
-            }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
-        }
-        col.addView(presetRow)
-
         col.addView(heading("Layout", 16f))
         col.addView(choice(Template.entries.map { it.label }, s.template.ordinal) { s = s.copy(template = Template.entries[it]) })
 
@@ -91,11 +73,36 @@ class SettingsActivity : Activity() {
         col.addView(toggle("Local time zone name", s.showZoneName) { s = s.copy(showZoneName = it) })
         col.addView(toggle("LOCAL / UTC labels", s.showLabels) { s = s.copy(showLabels = it) })
 
+        col.addView(heading("Date format", 16f))
+        val today = java.time.LocalDate.now()
+        col.addView(choice(DateStyle.entries.map {
+            val ex = today.format(java.time.format.DateTimeFormatter.ofPattern(it.pattern, java.util.Locale.getDefault()))
+            if (it.hint.isEmpty()) ex else "$ex  (${it.hint})"
+        }, s.dateStyle.ordinal) { s = s.copy(dateStyle = DateStyle.entries[it]) })
+
         col.addView(heading("Font", 16f))
         col.addView(choice(Font.entries.map { it.label }, s.font.ordinal, Font.entries.map { typefaceFor(it) }) { s = s.copy(font = Font.entries[it]) })
 
         col.addView(heading("Size", 16f))
         col.addView(choice(Size.entries.map { it.label }, s.size.ordinal) { s = s.copy(size = Size.entries[it]) })
+
+        col.addView(heading("Presets", 16f))
+        col.addView(note("Optional starting points. One tap sets layout, font, size and what's shown; your date format is kept."))
+        val presetRow = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        Preset.entries.forEach { p ->
+            presetRow.addView(Button(this).apply {
+                text = p.label
+                isAllCaps = false
+                typeface = typefaceFor(p.settings.font)
+                setOnClickListener {
+                    s = p.settings.copy(dateStyle = s.dateStyle)
+                    Prefs.save(this@SettingsActivity, s)
+                    ClockWidgetProvider.updateAll(this@SettingsActivity)
+                    recreate()
+                }
+            }, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        }
+        col.addView(presetRow)
 
         if (configuring) {
             col.addView(Button(this).apply {

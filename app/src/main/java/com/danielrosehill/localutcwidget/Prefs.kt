@@ -13,6 +13,21 @@ enum class Size(val key: String, val label: String, val clockSp: Float) {
     }
 }
 
+/** Date line format. Patterns work for both TextClock and java.time. Default drops the year. */
+enum class DateStyle(val key: String, val pattern: String, val hint: String) {
+    SHORT("short", "EEE d MMM", ""),
+    LONG("long", "EEE d MMM yyyy", ""),
+    DM("dm", "dd/MM", "day/month"),
+    MD("md", "MM/dd", "month/day"),
+    DMY("dmy", "dd/MM/yyyy", "day/month/year"),
+    MDY("mdy", "MM/dd/yyyy", "month/day/year"),
+    ISO("iso", "yyyy-MM-dd", "ISO"),
+    ;
+    companion object {
+        fun of(key: String?) = entries.firstOrNull { it.key == key } ?: SHORT
+    }
+}
+
 /** One settings set, shared by every instance of the widget. */
 data class Settings(
     val showDate: Boolean,
@@ -22,6 +37,7 @@ data class Settings(
     val font: Font,
     val template: Template,
     val size: Size,
+    val dateStyle: DateStyle = DateStyle.SHORT,
 )
 
 object Prefs {
@@ -37,6 +53,7 @@ object Prefs {
             font = Font.of(p.getString("font", null)),
             template = Template.of(p.getString("template", null)),
             size = Size.of(p.getString("size", null)),
+            dateStyle = DateStyle.of(p.getString("date_style", null)),
         )
     }
 
@@ -49,6 +66,7 @@ object Prefs {
             .putString("font", s.font.key)
             .putString("template", s.template.key)
             .putString("size", s.size.key)
+            .putString("date_style", s.dateStyle.key)
             .apply()
     }
 }

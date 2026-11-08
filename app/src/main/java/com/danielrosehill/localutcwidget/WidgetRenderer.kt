@@ -56,19 +56,30 @@ object WidgetRenderer {
             }
             if (s.template == Template.PIPE) rv.setTextViewTextSize(R.id.pipe, TypedValue.COMPLEX_UNIT_SP, big)
             rv.setTextViewText(R.id.zone_local, zoneText)
+            for (id in intArrayOf(R.id.date_local, R.id.date_utc)) {
+                rv.setCharSequence(id, "setFormat24Hour", s.dateStyle.pattern)
+                rv.setCharSequence(id, "setFormat12Hour", s.dateStyle.pattern)
+            }
+            if (s.template == Template.STACKED) {
+                val face = Typeface.create(s.font.systemFamily, Typeface.NORMAL)
+                val w = labelWidth(c, small, face)
+                rv.setInt(R.id.label_local, "setMinWidth", w)
+                rv.setInt(R.id.label_utc, "setMinWidth", w)
+            }
         } else {
             val tf = c.resources.getFont(s.font.fontRes)
             val now = Instant.now()
             val local = ZonedDateTime.ofInstant(now, zone)
             val utc = ZonedDateTime.ofInstant(now, ZoneOffset.UTC)
             val hm = DateTimeFormatter.ofPattern("HH:mm")
-            val day = DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
-            fun put(id: Int, text: String, sp: Float, color: Int, spacing: Float = 0f, descent: Boolean = false) =
-                rv.setImageViewBitmap(id, textBitmap(c, text, sp, color, tf, spacing, descent))
+            val day = DateTimeFormatter.ofPattern(s.dateStyle.pattern, Locale.getDefault())
+            val labelW = if (s.template == Template.STACKED) labelWidth(c, small, tf) else 0
+            fun put(id: Int, text: String, sp: Float, color: Int, spacing: Float = 0f, descent: Boolean = false, minW: Int = 0) =
+                rv.setImageViewBitmap(id, textBitmap(c, text, sp, color, tf, spacing, descent, minW))
             put(R.id.clock_local, local.format(hm), big, WHITE)
             put(R.id.clock_utc, utc.format(hm), big, BLUE)
-            put(R.id.label_local, c.getString(R.string.label_local), small, DIM, 0.1f)
-            put(R.id.label_utc, c.getString(R.string.label_utc), small, BLUE, 0.1f)
+            put(R.id.label_local, c.getString(R.string.label_local), small, DIM, 0.1f, minW = labelW)
+            put(R.id.label_utc, c.getString(R.string.label_utc), small, BLUE, 0.1f, minW = labelW)
             if (s.showDate) {
                 put(R.id.date_local, local.format(day), small, DIM, descent = true)
                 put(R.id.date_utc, utc.format(day), small, BLUE, descent = true)
@@ -101,7 +112,7 @@ object WidgetRenderer {
      */
     private fun textBitmap(
         c: Context, text: String, sp: Float, color: Int, tf: Typeface,
-        spacing: Float, descent: Boolean,
+        spacing: Float, descent: Boolean, minW: Int = 0,
     ): Bitmap {
         val paint = TextPaint(TextPaint.ANTI_ALIAS_FLAG).apply {
             typeface = tf
@@ -110,14 +121,26 @@ object WidgetRenderer {
             letterSpacing = spacing
         }
         val fm = paint.fontMetrics
-        val w = ceil(paint.measureText(text)).toInt().coerceAtLeast(1)
+        val w = ceil(paint.measureText(text)).toInt().coerceAtLeast(minW).coerceAtLeast(1)
         val h = ceil(-fm.ascent + if (descent) fm.descent else 0f).toInt().coerceAtLeast(1)
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         Canvas(bmp).drawText(text, 0f, -fm.ascent, paint)
         return bmp
     }
 
-    /** e.g. "Jerusalem · UTC+02:00". Empty when both parts are off. */
+    private fun labelPaint(c: Context, sp: Float, tf: Typeface) = TextPaint(TextPaint.ANTI_ALIAS_FLAG).apply {
+        typeface = tf
+        textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, c.resources.displayMetrics)
+        letterSpacing = 0.1f
+    }
+
+    /** Width of the wider of the two labels, so the stacked clocks share one left edge. */
+    private fun labelWidth(c: Context, sp: Float, tf: Typeface): Int {
+        val p = labelPaint(c, sp, tf)
+        return ceil(maxOf(p.measureText(c.getString(R.string.label_local)), p.measureText(c.getString(R.string.label_utc)))).toInt() + 1
+    }
+
+    /** e.g. "Jerusalem · +2". Empty when both parts are off. */
     fun zoneLine(zone: ZoneId, name: Boolean, offset: Boolean): String {
         val parts = mutableListOf<String>()
         if (name) parts += zoneName(zone)
@@ -131,10 +154,11 @@ object WidgetRenderer {
         else zone.getDisplayName(TextStyle.SHORT, Locale.getDefault())
     }
 
+    /** Hours from UTC, no "UTC" prefix: "+2", "-5", "+5.5", "+5.75", "±0". */
     fun formatOffset(totalSeconds: Int): String {
-        if (totalSeconds == 0) return "UTC±00:00"
+        if (totalSeconds == 0) return "±0"
         val sign = if (totalSeconds < 0) "-" else "+"
-        val a = abs(totalSeconds)
-        return "UTC%s%02d:%02d".format(sign, a / 3600, (a % 3600) / 60)
+        val hours = java.math.BigDecimal(abs(totalSeconds)).divide(java.math.BigDecimal(3600), 2, java.math.RoundingMode.HALF_UP)
+        return sign + hours.stripTrailingZeros().toPlainString()
     }
 }

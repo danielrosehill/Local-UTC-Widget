@@ -4,14 +4,18 @@
 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" >
 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="true" >
 <ImageView android:id="@+id/label_local" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" android:layout_marginEnd="10dp"/>
+<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:baselineAlignedChildIndex="0">
 <ImageView android:id="@+id/clock_local" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" />
-</LinearLayout>
 <ImageView android:id="@+id/zone_local" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" />
 <ImageView android:id="@+id/date_local" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" />
+</LinearLayout>
+</LinearLayout>
 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="true" android:layout_marginTop="6dp">
 <ImageView android:id="@+id/label_utc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" android:layout_marginEnd="10dp"/>
+<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:baselineAlignedChildIndex="0">
 <ImageView android:id="@+id/clock_utc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" />
-</LinearLayout>
 <ImageView android:id="@+id/date_utc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAlignBottom="true" />
+</LinearLayout>
+</LinearLayout>
 </LinearLayout>
 </LinearLayout>

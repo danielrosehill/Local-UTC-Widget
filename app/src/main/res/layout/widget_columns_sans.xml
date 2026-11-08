@@ -11,7 +11,7 @@
 <TextView android:id="@+id/zone_local" android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:fontFamily="sans-serif" android:textColor="#B0BEC5" android:textSize="12sp" />
 <TextClock android:id="@+id/date_local" android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:fontFamily="sans-serif" android:format12Hour="EEE d MMM yyyy" android:format24Hour="EEE d MMM yyyy" android:includeFontPadding="false" android:maxLines="1"
+    android:fontFamily="sans-serif" android:format12Hour="EEE d MMM" android:format24Hour="EEE d MMM" android:includeFontPadding="false" android:maxLines="1"
     android:textColor="#B0BEC5" android:textSize="12sp"  />
 </LinearLayout>
 <FrameLayout android:layout_width="1.5dp" android:layout_height="match_parent" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" android:background="#55FFFFFF" />
@@ -23,7 +23,7 @@
     android:fontFamily="sans-serif" android:format12Hour="HH:mm" android:format24Hour="HH:mm" android:includeFontPadding="false" android:maxLines="1"
     android:textColor="#81D4FA" android:textSize="34sp" android:timeZone="UTC" />
 <TextClock android:id="@+id/date_utc" android:layout_width="wrap_content" android:layout_height="wrap_content"
-    android:fontFamily="sans-serif" android:format12Hour="EEE d MMM yyyy" android:format24Hour="EEE d MMM yyyy" android:includeFontPadding="false" android:maxLines="1"
+    android:fontFamily="sans-serif" android:format12Hour="EEE d MMM" android:format24Hour="EEE d MMM" android:includeFontPadding="false" android:maxLines="1"
     android:textColor="#81D4FA" android:textSize="12sp" android:timeZone="UTC" />
 </LinearLayout>
 </LinearLayout>
